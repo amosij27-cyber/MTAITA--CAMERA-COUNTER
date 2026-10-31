@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17233b"><meta name="description" content="MTAITA Camera Counter - jaribio la kuhesabu bidhaa kwa rangi">
+<link rel="manifest" href="manifest.webmanifest">
+<title>MTAITA Camera Counter</title>
+<style>
+:root{--navy:#17233b;--gold:#f5b942;--bg:#f4f6fa;--ink:#172033}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,Arial,sans-serif}.top{background:var(--navy);color:white;padding:22px 18px 18px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:14px;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:900;font-size:19px}.top h1{font-size:21px;margin:0}.top p{margin:4px 0 0;color:#d9e0ef;font-size:13px}.wrap{max-width:700px;margin:auto;padding:16px}.panel{background:white;border-radius:18px;padding:16px;margin:0 0 14px;box-shadow:0 3px 15px #17233b12}.panel h2{font-size:17px;margin:0 0 12px}.videoBox{position:relative;background:#101827;border-radius:14px;overflow:hidden;min-height:210px;display:grid;place-items:center}video{width:100%;display:block;max-height:55vh;object-fit:cover}#placeholder{color:#dbe3f3;padding:35px;text-align:center}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}button,select{border:0;border-radius:12px;padding:12px 15px;font:inherit}button{background:var(--navy);color:white;font-weight:650}button.alt{background:#e9edf5;color:var(--navy)}button:disabled{opacity:.45}.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.color{background:#f0f2f7;color:var(--ink);border:2px solid transparent}.color.active{border-color:var(--gold);background:#fff8e8}.swatch{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:6px;vertical-align:middle}.count{font-size:48px;font-weight:850;text-align:center;color:var(--navy);line-height:1.15}.muted{color:#687386;font-size:13px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.number{font-weight:750}.note{font-size:13px;line-height:1.5;color:#596579}.warning{background:#fff6df;border-left:4px solid #e3a82d;padding:11px;border-radius:8px;font-size:13px;line-height:1.45}.small{font-size:12px}footer{text-align:center;color:#738096;padding:8px 0 25px}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><div class="logo">M</div><div><h1>MTAITA Camera Counter</h1><p>Jaribio la kuhesabu bidhaa kwa kamera</p></div></div></header>
+<main class="wrap">
+<section class="panel"><h2>1. Kamera</h2><div class="videoBox"><video id="video" autoplay playsinline muted hidden></video><div id="placeholder">Bonyeza “Washa kamera” kisha ruhusu kamera.</div></div><div class="actions"><button id="start">Washa kamera</button><button class="alt" id="stop" disabled>Zima kamera</button></div></section>
+<section class="panel"><h2>2. Chagua rangi ya bidhaa</h2><div class="colors" id="colors">
+<button class="color active" data-color="red"><span class="swatch" style="background:#e53935"></span>Nyekundu</button>
+<button class="color" data-color="blue"><span class="swatch" style="background:#2878df"></span>Bluu</button>
+<button class="color" data-color="green"><span class="swatch" style="background:#28a45b"></span>Kijani</button>
+<button class="color" data-color="yellow"><span class="swatch" style="background:#f2cf32"></span>Njano</button>
+<button class="color" data-color="black"><span class="swatch" style="background:#222"></span>Nyeusi</button>
+<button class="color" data-color="white"><span class="swatch" style="background:#fff;border:1px solid #aaa"></span>Nyeupe</button>
+</div><p class="muted">Rangi huchaguliwa kwa majaribio; mwanga na mandharinyuma vinaweza kuathiri matokeo.</p></section>
+<section class="panel"><h2>3. Idadi</h2><div class="count" id="count">0</div><div class="muted" style="text-align:center">idadi ya bidhaa ulizorekodi</div><div class="actions"><button id="plus">+1 Ongeza</button><button class="alt" id="minus">−1 Punguza</button><button class="alt" id="reset">Anza upya</button></div><div class="row" style="margin-top:14px"><span class="muted">Jumla ya juu inayoruhusiwa</span><span class="number">500</span></div><div class="row"><span class="muted">Rangi iliyochaguliwa</span><span class="number" id="chosen">Nyekundu</span></div></section>
+<section class="panel"><h2>4. Hifadhi ripoti</h2><button id="csv">Pakua ripoti ya CSV</button><p class="muted">Ripoti itahifadhi rangi na idadi uliyoingiza.</p></section>
+<section class="warning"><b>Ufafanuzi muhimu:</b> Hili ni toleo la mwanzo la PWA. Kamera inaonyesha picha ya moja kwa moja, lakini bado halina AI ya kutambua na kuhesabu bidhaa zenyewe. Idadi inaongezwa kwa mikono. Ili kupata utambuzi wa bidhaa kiotomatiki tunahitaji picha za bidhaa zako na modeli ya AI iliyofundishwa na kujaribiwa.</section>
+<footer>MTAITA • Toleo la majaribio</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);let stream=null,count=0,selected='red';
+const names={red:'Nyekundu',blue:'Bluu',green:'Kijani',yellow:'Njano',black:'Nyeusi',white:'Nyeupe'};
+function render(){$('count').textContent=count;$('chosen').textContent=names[selected];$('minus').disabled=count===0;$('plus').disabled=count>=500}
+document.querySelectorAll('.color').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.color').forEach(x=>x.classList.remove('active'));b.classList.add('active');selected=b.dataset.color;render()}));
+$('plus').onclick=()=>{if(count<500){count++;render()}};
+$('minus').onclick=()=>{if(count>0){count--;render()}};
+$('reset').onclick=()=>{if(confirm('Una uhakika unataka kuanza upya?')){count=0;render()}};
+$('start').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});$('video').srcObject=stream;$('video').hidden=false;$('placeholder').hidden=true;$('start').disabled=true;$('stop').disabled=false}catch(e){alert('Kamera haikufunguka. Ruhusu kamera kwenye Chrome na hakikisha tovuti inatumia HTTPS.')}};
+$('stop').onclick=()=>{if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('video').srcObject=null;$('video').hidden=true;$('placeholder').hidden=false;$('start').disabled=false;$('stop').disabled=true};
+$('csv').onclick=()=>{const csv='Bidhaa,Rangi,Idadi\\nMTAITA,'+names[selected]+','+count;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='mtaita-ripoti.csv';a.click();URL.revokeObjectURL(a.href)};
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();
+</script>
+</body></html>
